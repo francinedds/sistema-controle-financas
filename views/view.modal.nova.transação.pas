@@ -1,0 +1,69 @@
+unit view.modal.nova.transação;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons,
+  view.fundo, service.conexao;
+
+type
+  TViewModal = class(TForm)
+    pnlContent: TPanel;
+    pnlTitle: TPanel;
+    pnlBtnCadastrar: TPanel;
+    btnCadastrar: TSpeedButton;
+    lblTitleModal: TLabel;
+    edtDescricao: TEdit;
+    lblDescricao: TLabel;
+    edtCategoria: TEdit;
+    lblCategoria: TLabel;
+    edtData: TEdit;
+    lblData: TLabel;
+    lblValor: TLabel;
+    lblTipo: TLabel;
+    cbTipo: TComboBox;
+    btnClose: TSpeedButton;
+    edtValor: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    procedure btnCloseClick(Sender: TObject);
+    procedure btnCadastrarClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ViewModal: TViewModal;
+
+implementation
+
+{$R *.dfm}
+
+procedure TViewModal.btnCadastrarClick(Sender: TObject);
+begin
+    with ServiceConexao.FDQuery_transacoes do
+  begin
+    SQL.Text := 'INSERT INTO Transacoes (tra_descricao, tra_categoria, ' +
+                'tra_data, tra_valor, tra_tipo) ' +
+                'VALUES (:tra_descricao, :tra_categoria, :tra_data, ' +
+                ':tra_valor, :tra_tipo)';
+    Params.ParamByName('tra_descricao').AsString := edtDescricao.Text;
+    Params.ParamByName('tra_categoria').AsString := edtCategoria.Text;
+    Params.ParamByName('tra_data').AsString      := edtData.Text;
+    Params.ParamByName('tra_valor').AsString     := edtValor.Text;
+    Params.ParamByName('tra_tipo').AsString      := cbTipo.Text;
+    ExecSQL;
+
+  end;
+    ShowMessage('Transação salva com sucesso!');
+end;
+
+procedure TViewModal.btnCloseClick(Sender: TObject);
+begin
+  Self.Close;
+end;
+
+end.

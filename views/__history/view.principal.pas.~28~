@@ -1,0 +1,123 @@
+unit view.principal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Buttons, Vcl.StdCtrls,
+  Data.DB, Vcl.Grids, Vcl.DBGrids, view.modal.nova.transação, view.fundo,
+  service.conexao, Vcl.Imaging.pngimage;
+
+type
+  TViewPrincipal = class(TForm)
+    pnlHeader: TPanel;
+    pnlFooter: TPanel;
+    pnlContent: TPanel;
+    pnlNovaTransação: TPanel;
+    pnlBtnNovaTransação: TPanel;
+    btnNovaTransação: TSpeedButton;
+    pnlLogo: TPanel;
+    imgLogo: TImage;
+    lblLogo: TLabel;
+    pnlSaldos: TPanel;
+    pnlGrid: TPanel;
+    DBGrid: TDBGrid;
+    btnClose: TSpeedButton;
+    DataSource: TDataSource;
+    pnlEntradas: TPanel;
+    pnlSaidas: TPanel;
+    pnlTotal: TPanel;
+    lblEntradas: TLabel;
+    lblSaidas: TLabel;
+    lblTotal: TLabel;
+    lblValorEntradas: TLabel;
+    lblValorSaidas: TLabel;
+    lblValorTotal: TLabel;
+    procedure btnNovaTransaçãoClick(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure DBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure SpeedButton1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ViewPrincipal: TViewPrincipal;
+
+implementation
+
+{$R *.dfm}
+
+procedure TViewPrincipal.btnCloseClick(Sender: TObject);
+begin
+  Self.Close;
+end;
+
+procedure TViewPrincipal.btnNovaTransaçãoClick(Sender: TObject);
+begin
+  ViewModal := TViewModal.Create(Self);
+  try
+    ViewFundo.Show;
+    ViewModal.ShowModal;
+  finally
+    ViewFundo.Hide;
+    FreeAndNil(ViewModal);
+  end;
+end;
+
+procedure TViewPrincipal.DBGridDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if gdSelected in State then
+  begin
+    // Define a cor de fundo da célula selecionada
+    DBGrid.Canvas.Brush.Color := clBtnFace;  // Cor de fundo (cor do item selecionado)
+
+    // Define a cor do texto da célula selecionada
+    DBGrid.Canvas.Font.Color := clWindowText;  // Cor do texto (branco, para contraste)
+  end
+  else
+  begin
+    // Para células não selecionadas, você pode definir uma cor padrão
+    DBGrid.Canvas.Brush.Color := clWindow;  // Cor de fundo padrão
+    DBGrid.Canvas.Font.Color := clWindowText;  // Cor do texto padrão
+  end;
+
+  // Desenha a célula
+  DBGrid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+end;
+
+procedure TViewPrincipal.SpeedButton1Click(Sender: TObject);
+  var
+  TotalValor: Double;
+begin
+  // Definindo a consulta SQL para somar o campo 'tra_valor'
+  ServiceConexao.FDQuery_transacoes.SQL.Text := 'SELECT SUM(tra_valor) FROM transacoes';
+
+  try
+    // Executando a consulta
+    ServiceConexao.FDQuery_transacoes.Open;
+
+    // Verificando se o resultado foi encontrado
+    if not ServiceConexao.FDQuery_transacoes.Eof then
+    begin
+      // Pegando o valor somado
+      TotalValor := ServiceConexao.FDQuery_transacoes.FieldByName('total_valor').AsFloat;
+
+      // Exibindo o total no Label
+      lblValorTotal.Caption := 'Total das Transações: ' + FormatFloat('###,##0.00', TotalValor);
+    end
+    else
+    begin
+      //Label1.Caption := 'Nenhuma transação registrada.';
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao calcular o total das transações: ' + E.Message);
+  end;
+end;
+
+end.

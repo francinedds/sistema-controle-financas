@@ -1,0 +1,30 @@
+unit view.modal.nova.transação;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons;
+
+type
+  TViewModal = class(TForm)
+    pnlHeader: TPanel;
+    pnlLogo: TPanel;
+    pnlContent: TPanel;
+    pnlTitle: TPanel;
+    pnlBtnCadastrar: TPanel;
+    btnCadastrar: TSpeedButton;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ViewModal: TViewModal;
+
+implementation
+
+{$R *.dfm}
+
+end.

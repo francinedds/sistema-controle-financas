@@ -1,0 +1,39 @@
+unit view.modal.nova.transação;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons,
+  view.fundo;
+
+type
+  TViewModal = class(TForm)
+    pnlHeader: TPanel;
+    pnlLogo: TPanel;
+    pnlContent: TPanel;
+    pnlTitle: TPanel;
+    pnlBtnCadastrar: TPanel;
+    btnCadastrar: TSpeedButton;
+    lblTitleModal: TLabel;
+    btnClose: TSpeedButton;
+    procedure btnCloseClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  ViewModal: TViewModal;
+
+implementation
+
+{$R *.dfm}
+
+procedure TViewModal.btnCloseClick(Sender: TObject);
+begin
+  Self.Close;
+end;
+
+end.
